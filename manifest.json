@@ -8,9 +8,9 @@
     "default_popup": "tabbo.html"
   },
   "permissions": [
-    "activeTab",
     "tabs",
-    "desktopCapture",
+    "sessions",
     "https://ajax.googleapis.com/",
+    "<all_urls>"
   ]
 }
