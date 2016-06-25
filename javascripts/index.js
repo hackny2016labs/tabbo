@@ -31,6 +31,7 @@
     });
 })();
 
+
 function moveHandler(window_id) {
     chrome.tabs.getSelected(function(tab) {
         chrome.tabs.move(tab.id, {windowId: window_id, index: -1}, function(){
@@ -38,3 +39,11 @@ function moveHandler(window_id) {
         });
     });
 };
+
+(function(){
+        console.log('now');
+        Mousetrap.bind('4', function(){
+            alert("Sup Dawg");
+        });     
+})();
+
