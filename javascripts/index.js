@@ -1,14 +1,16 @@
 (function(){
     $('.test_1').on('click',function() {
-        console.log('one clicked!');
-        console.log(windows.Window);
+        chrome.sessions.getRecentlyClosed(function(sessions) {
+            console.log(sessions);
+        });
     });
     $('.test_2').on('click',function() {
-        chrome.tabs.getCurrent(function(tab) {
-            console.log("this", this);
-            console.log("tab", tab);
-        })
+        chrome.windows.getAll({populate:true},function(windows){
+            windows.forEach(function(window){
+                chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
+                    $( "#screenshot_start" ).append("<img src=" + image + " width='400'>");
+                });
+            });
+        });
     });
-    console.log("hello world");
-
 })();
