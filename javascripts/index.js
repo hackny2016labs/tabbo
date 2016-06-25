@@ -14,3 +14,10 @@
         });
     });
 })();
+
+(function(){
+        console.log('now');
+        Mousetrap.bind('4', function(){
+            alert("Sup Dawg");
+        });     
+})();
