@@ -1,9 +1,8 @@
 var DEFAULT = {
-    "select tab left": "command+left",
-    "select tab right": "command+right",
-    "move tab left": "command+shift+left",
-    "move tab right": "command+shift+right",
-    "move tab window": "command+shift+w"
+    "select tab left": "command+shift+1",
+    "select tab right": "command+shift+2",
+    "move tab left": "command+shift+a",
+    "move tab right": "command+shift+s",
 };
 
 var options = DEFAULT;
