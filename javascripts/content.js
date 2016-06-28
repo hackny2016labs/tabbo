@@ -8,11 +8,19 @@ var DEFAULT = {
 var options = DEFAULT;
 
 function activateShortcuts(){
+    // create keybindings
     for(var action in options){
         if(options.hasOwnProperty(action)){
             bindAction(action);
         }
     }
+
+    // handler for when shortcut is entered while the user is in a
+    // form field
+    Mousetrap.prototype.stopCallback = function(event, element, combo){
+        // returning false allows the shortcuts action to be executed
+        return false;
+    };
 }
 
 function bindAction(action){
