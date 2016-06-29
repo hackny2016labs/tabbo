@@ -3,9 +3,10 @@ var DEFAULT = {
     "select tab right": "command+shift+2",
     "move tab left": "command+shift+a",
     "move tab right": "command+shift+s",
+    "move tab window": "command+shift+x"
 };
 
-var options = DEFAULT;
+var options = DEFAULT
 
 function activateShortcuts(){
     // create keybindings
@@ -25,15 +26,18 @@ function activateShortcuts(){
 
 function bindAction(action){
     Mousetrap.bind(options[action], function(){
-        chrome.runtime.sendMessage({action: action}, handleResponse);
+        chrome.runtime.sendMessage({action: action});
     });
 }
 
-function handleResponse(response) {
+chrome.runtime.onMessage.addListener(handleResponse);
+
+function handleResponse(response, sender, sendResponse){
     if(response.action === "move tab window"){
-        // inject images
-        // tell background which window to send tab to 
-    }     
+        response.images.forEach(function(image) {
+            var fragment = "<img class='screenshot_move' src=" + image + " width='400'>"
+        });
+    }    
 }
 
 activateShortcuts();

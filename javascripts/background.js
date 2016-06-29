@@ -2,7 +2,8 @@ var ACTION_HANDLERS = {
     "select tab left": selectTab,
     "select tab right": selectTab,
     "move tab left": moveTab,
-    "move tab right": moveTab
+    "move tab right": moveTab,
+    "move tab window": moveTabWindow
 };
 
 var INDEX_HANDLERS = {
@@ -13,6 +14,27 @@ var INDEX_HANDLERS = {
 };
 
 chrome.runtime.onMessage.addListener(handleResponse);
+
+function moveTabWindow(action) {
+    var images = [];
+    chrome.windows.getAll({populate:true}, function(windows) {
+        windows.forEach(function(window){
+            chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
+                images.push(image);
+                if (images.length === windows.length) {
+                    sendImagesToContent(images, action);
+                }
+            });
+        });
+    });
+}
+
+function sendImagesToContent(images, action) {
+    console.log(images);
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.sendMessage(tabs[0].id, {action: action, images:images});  
+    });
+}
 
 function selectTab(action){
     chrome.tabs.query({currentWindow: true}, function(tabs) {
@@ -47,23 +69,6 @@ function prevTab(tab, tabs) {
 function nextTab(tab, tabs) {
     return tab.index == tabs.length - 1 ? tabs[0] : tabs[tab.index + 1];
 }
-
-// (function(){
-//     $('.test_2').on('click',function() {
-//         chrome.windows.getAll({populate:true},function(windows){
-//             windows.forEach(function(window){
-//                 chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
-//                     $( "#screenshot_start" ).append(function() {
-//                         return $("<img class='screenshot_move' src=" + image + " width='400'>").on('click', function() {
-//                             moveHandler(window.id);
-//                         });
-//                     });
-//                 });
-//             });
-//         });
-//     });
-// })();
-
 
 function moveHandler(window_id) {
     chrome.tabs.getSelected(function(tab) {
