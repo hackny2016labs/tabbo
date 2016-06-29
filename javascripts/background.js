@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(handleResponse);
 function selectTab(action){
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         chrome.tabs.getSelected(function(tab) {
-            var nextTab = INDEX_HANDLERS[action](tab, tabs)
+            var nextTab = INDEX_HANDLERS[action](tab, tabs);
             chrome.tabs.update(nextTab.id, {active: true}, function() {
                 console.log("done!");
             });
@@ -28,7 +28,7 @@ function selectTab(action){
 function moveTab(action) {
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         chrome.tabs.getSelected(function(tab) {
-            var nextTab = INDEX_HANDLERS[action](tab, tabs)
+            var nextTab = INDEX_HANDLERS[action](tab, tabs);
             chrome.tabs.move(tab.id, {index: nextTab.index}, function(){
                 console.log("done!");
             });
@@ -41,7 +41,7 @@ function handleResponse(response, sender, sendResponse){
 }
 
 function prevTab(tab, tabs) {
-    return tab.index == 0 ? tabs[tabs.length - 1] : tabs[tab.index - 1];
+    return tab.index === 0 ? tabs[tabs.length - 1] : tabs[tab.index - 1];
 }
 
 function nextTab(tab, tabs) {
@@ -72,4 +72,13 @@ function moveHandler(window_id) {
         });
     });
 }
+
+// prefix got triggered, inject script to listen for following keypress
+chrome.commands.onCommand.addListener(
+    function(command) {
+        chrome.tabs.executeScript({
+            code: "$(document).keypress(function(){ chrome.runtime.sendMessage({action: \"move tab left\"}); });"
+        });
+    }
+);
 
