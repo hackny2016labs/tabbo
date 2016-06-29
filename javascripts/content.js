@@ -3,7 +3,7 @@ var DEFAULT = {
     "select tab right": "command+shift+2",
     "move tab left": "command+shift+a",
     "move tab right": "command+shift+s",
-    "move tab window": "command+shift+x"
+    "move tab window request": "command+shift+x"
 };
 
 var options = DEFAULT
@@ -33,10 +33,29 @@ function bindAction(action){
 chrome.runtime.onMessage.addListener(handleResponse);
 
 function handleResponse(response, sender, sendResponse){
-    if(response.action === "move tab window"){
-        response.images.forEach(function(image) {
-            var fragment = "<img class='screenshot_move' src=" + image + " width='400'>"
-        });
+    if(response.action === "move tab window request"){
+        var ele = document.createElement("div");
+        ele.setAttribute("id", "screenshot");
+        for(var i = 0; i < response.image.length; i++) {
+            console.log(i);
+            var screenshot = document.createElement('img');
+            screenshot.src = response.image[i];
+            screenshot.style.width = "400px";
+            (function (screenshot, id) {
+                screenshot.addEventListener('click', function(){
+                    chrome.runtime.sendMessage({action: "move tab window", window_id: id});
+                    ele.style.display = "none";
+                });
+            })(screenshot, response.id[i]);
+            ele.appendChild(screenshot);
+            // bindAction(screenshot, response.id[i]);
+        }
+        document.body.appendChild(ele);
+        var screenshots = document.getElementById("screenshot"); 
+        screenshots.style.position = "fixed";
+        screenshots.style.top = "150px";
+        screenshots.style.margin = "auto";
+
     }    
 }
 
