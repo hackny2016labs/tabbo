@@ -29,8 +29,19 @@
             });
         });
     });
+    $('.test_4').on('click', function() {
+        popOffWindow();
+    })
 })();
 
+
+function popOffWindow() {
+    chrome.tabs.getSelected(function(tab){
+        chrome.windows.create({tabId: tab.id}, function() {
+            console.log('popped off!');
+        });
+    })
+}
 
 function moveHandler(window_id) {
     chrome.tabs.getSelected(function(tab) {

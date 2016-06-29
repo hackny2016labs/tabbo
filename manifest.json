@@ -20,5 +20,28 @@
     "tabs",
     "https://ajax.googleapis.com/",
     "<all_urls>"
-  ]
+  ],
+  "commands": {
+    "shift_left": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Left"
+      },
+      "description": "Keybind to move tab to the right",
+      "global": true
+    },
+    "shift_right": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Right"
+      },
+      "description": "Keybind to move tab to the left",
+      "global": true
+    },
+    "pop_off": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P"
+      },
+      "description": "Keybind to pop off the tab",
+      "global": true
+    }
+  }
 }
