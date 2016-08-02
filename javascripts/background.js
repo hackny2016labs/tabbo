@@ -14,6 +14,23 @@ var INDEX_HANDLERS = {
     "move tab right": nextTab
 };
 
+chrome.commands.onCommand.addListener(function(command) {
+    console.log('chrome command called!', JSON.stringify(command));
+    switch(command) {
+        case 'shift_right':
+            moveTab("move tab left");
+            break;
+        case 'shift_left':
+            moveTab("move tab right");
+            break;
+        case 'pop_off':
+            popOffWindow();
+            break;
+        default:
+            break;
+    }
+});
+
 chrome.runtime.onMessage.addListener(handleResponse);
 
 function moveTabWindowRequest(response) {
@@ -44,7 +61,7 @@ function moveTabWindow(response) {
 
 function sendInfoToContent(images, ids, response) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-        chrome.tabs.sendMessage(tabs[0].id, {action: response.action, image: images, id: ids});  
+        chrome.tabs.sendMessage(tabs[0].id, {action: response.action, image: images, id: ids});
     });
 }
 
@@ -81,4 +98,23 @@ function prevTab(tab, tabs) {
 function nextTab(tab, tabs) {
     return tab.index == tabs.length - 1 ? tabs[0] : tabs[tab.index + 1];
 }
+
+
+
+function popOffWindow() {
+    chrome.tabs.getSelected(function(tab){
+        chrome.windows.create({tabId: tab.id}, function() {
+            console.log('popped off!');
+        });
+    })
+}
+
+function moveHandler(window_id) {
+    chrome.tabs.getSelected(function(tab) {
+        chrome.tabs.move(tab.id, {windowId: window_id, index: -1}, function(){
+            console.log("done!");
+        });
+    });
+}
+
 
