@@ -25,7 +25,7 @@ function moveTabWindowRequest(response) {
                 images.push(image);
                 ids.push(window.id);
                 if (images.length === windows.length) {
-                    sendImagesToContent(images, ids, response);
+                    sendInfoToContent(images, ids, response);
                 }
             });
         });
@@ -42,7 +42,7 @@ function moveTabWindow(response) {
     });
 }
 
-function sendImagesToContent(images, ids, response) {
+function sendInfoToContent(images, ids, response) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
         chrome.tabs.sendMessage(tabs[0].id, {action: response.action, image: images, id: ids});  
     });
@@ -80,13 +80,5 @@ function prevTab(tab, tabs) {
 
 function nextTab(tab, tabs) {
     return tab.index == tabs.length - 1 ? tabs[0] : tabs[tab.index + 1];
-}
-
-function moveHandler(window_id) {
-    chrome.tabs.getSelected(function(tab) {
-        chrome.tabs.move(tab.id, {windowId: window_id, index: -1}, function(){
-            console.log("done!");
-        });
-    });
 }
 

@@ -37,7 +37,6 @@ function handleResponse(response, sender, sendResponse){
         var ele = document.createElement("div");
         ele.setAttribute("id", "screenshot");
         for(var i = 0; i < response.image.length; i++) {
-            console.log(i);
             var screenshot = document.createElement('img');
             screenshot.src = response.image[i];
             screenshot.style.width = "400px";
@@ -48,7 +47,6 @@ function handleResponse(response, sender, sendResponse){
                 });
             })(screenshot, response.id[i]);
             ele.appendChild(screenshot);
-            // bindAction(screenshot, response.id[i]);
         }
         document.body.appendChild(ele);
         var screenshots = document.getElementById("screenshot"); 
