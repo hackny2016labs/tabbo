@@ -30,11 +30,15 @@ chrome.commands.onCommand.addListener(function(command) {
     }
 });
 
-// opens up keybinds
+// listener to the client
 chrome.extension.onConnect.addListener(function(port) {
     port.onMessage.addListener(function(msg) {
-        if (msg === "keybinds") {
-            chrome.tabs.create({url : "chrome://extensions/configureCommands"});
+        switch(msg){
+            case "keybinds" :
+                chrome.tabs.create({url : "chrome://extensions/configureCommands"});
+                break;
+            default:
+                break;
         }
     });
 });

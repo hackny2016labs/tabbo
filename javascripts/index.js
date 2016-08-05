@@ -1,22 +1,37 @@
 var toSendId = window.location.hash.slice(1);
 chrome.windows.getAll({populate:true},function(windows){
     chrome.windows.getCurrent(function(currentWindow) {
+        var count = 1;
         windows.forEach(function(eachWindow) {
             if(eachWindow.id !== currentWindow.id) {
                 chrome.tabs.captureVisibleTab(eachWindow.id, {quality: 50}, function (image) {
-                    $( "#open-windows" ).append(function() {
-                        return $("<div class='screenshot' style='background-image:url("+ image + ")''>").on('click', function() {
-                            chrome.tabs.getSelected(function(tab){
-                                chrome.tabs.remove(tab.id);
-                            })
-                            sendTab(eachWindow.id, parseInt(toSendId));
+                    Mousetrap.bind(count.toString(), function () {
+                        selectWindow(eachWindow, toSendId)
+                    });
+                    $("#open-windows").append(function() {
+                        console.log('count',count);
+                        var element = $(
+                            "<div class='screenshot' style='background-image:url(" + image + ")''>" +
+                                "<div class='screen-index'>" + count + "</div>" +
+                            "</div>");
+                        count++;
+                        element.on('click', function() {
+                            selectWindow(eachWindow, toSendId);
                         });
+                        return element;
                     });
                 });
             }
         });
     });
 });
+
+function selectWindow(eachWindow, toSendId) {
+    chrome.tabs.getSelected(function(tab){
+        chrome.tabs.remove(tab.id);
+    });
+    sendTab(eachWindow.id, parseInt(toSendId));
+}
 
 function sendTab(windowId, tabId) {
     chrome.tabs.move(tabId, {windowId: windowId, index: -1}, function() {
