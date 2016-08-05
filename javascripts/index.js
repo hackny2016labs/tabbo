@@ -10,7 +10,7 @@
         chrome.windows.getAll({populate:true},function(windows){
             windows.forEach(function(window){
                 chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
-                    $( "#screenshot_start" ).append(function() {
+                    $( "#open-windows" ).append(function() {
                         return $("<img class='screenshot_move' src=" + image + " width='400'>").on('click', function() {
                             moveHandler(window.id);
                         });
@@ -51,3 +51,30 @@ function moveHandler(window_id) {
     });
 }
 
+function sendTab(windowId, tabId) {
+    chrome.tabs.move(tabId, {windowId: windowId, index: -1}, function() {
+        console.log("moved!");
+    })
+}
+
+var port = chrome.extension.connect({name: "Sample Communication"});
+port.postMessage("Hi BackGround");
+port.onMessage.addListener(function(msg) {
+    console.log('window.location.hash.slice(1',window.location.hash.slice(1));
+    var toSendId = window.location.hash.slice(1);
+    chrome.windows.getAll({populate:true},function(windows){
+        windows.forEach(function(window){
+            chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
+                $( "#open-windows" ).append(function() {
+                    return $("<img class='screenshot_move' src=" + image + " width='400'>").on('click', function() {
+                        chrome.tabs.getSelected(function(tab){
+                            console.log('tab.id',tab.id);
+                            chrome.tabs.remove(tab.id);
+                        })
+                        sendTab(window.id, parseInt(toSendId));
+                    });
+                });
+            });
+        });
+    });
+});

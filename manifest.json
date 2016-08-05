@@ -4,9 +4,6 @@
   "name": "Tabbo",
   "description": "Tab Management Hotkeys",
   "version": "1.0",
-  "browser_action": {
-    "default_popup": "tabbo.html"
-  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -19,19 +16,20 @@
   "permissions": [
     "tabs",
     "https://ajax.googleapis.com/",
-    "<all_urls>"
+    "<all_urls>",
+    "chrome://favicon/"
   ],
   "commands": {
     "shift_left": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Left"
+        "default": "Ctrl+Shift+Period"
       },
       "description": "Keybind to move tab to the right",
       "global": true
     },
     "shift_right": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Right"
+        "default": "Ctrl+Shift+Comma"
       },
       "description": "Keybind to move tab to the left",
       "global": true
@@ -41,6 +39,13 @@
         "default": "Ctrl+Shift+P"
       },
       "description": "Keybind to pop off the tab",
+      "global": true
+    },
+    "send_tab": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      },
+      "description": "Keybind to send the tab to another window",
       "global": true
     }
   }

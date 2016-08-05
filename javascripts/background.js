@@ -14,6 +14,18 @@ var INDEX_HANDLERS = {
     "move tab right": nextTab
 };
 
+chrome.extension.onConnect.addListener(function(port) {
+  console.log("Connected .....");
+  port.onMessage.addListener(function(msg) {
+        console.log("message recieved"+ msg);
+        port.postMessage("Hi Popup.js");
+        chrome.tabs.getSelected(function(tab) {
+            console.log('CURRENT TAB IN ONCONNECT', tab.id);
+        })
+  });
+});
+
+
 chrome.commands.onCommand.addListener(function(command) {
     console.log('chrome command called!', JSON.stringify(command));
     switch(command) {
@@ -26,6 +38,13 @@ chrome.commands.onCommand.addListener(function(command) {
         case 'pop_off':
             popOffWindow();
             break;
+        case 'send_tab':
+            console.log("sending tab!!");
+            console.log('command',command);
+            chrome.tabs.getSelected(function(tab) {
+                console.log('KEY COMMAND tab.id',tab.id);
+                chrome.tabs.create({url : "../tabbo.html#"+tab.id});
+            })
         default:
             break;
     }
@@ -79,7 +98,8 @@ function selectTab(response){
 function moveTab(response) {
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         chrome.tabs.getSelected(function(tab) {
-            var nextTab = INDEX_HANDLERS[response.action](tab, tabs)
+            console.log('response.action',response);
+            var nextTab = INDEX_HANDLERS[response](tab, tabs);
             chrome.tabs.move(tab.id, {index: nextTab.index}, function(){
                 console.log("done!");
             });
