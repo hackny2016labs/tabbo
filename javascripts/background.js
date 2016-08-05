@@ -93,12 +93,15 @@ function explodeTabs() {
     chrome.windows.getAll({populate:true}, function(chromeWindows){
         chromeWindows.forEach(function(chromeWindow){
             chromeWindow.tabs.forEach(function(tab){
+                var width = Math.floor((Math.random() * (screen.width * 0.75)) + 1);
+                var height = Math.floor((Math.random() * (screen.height * 0.75)) + 1);
                 chrome.windows.create({
                     tabId: tab.id,
-                    left: Math.floor((Math.random() * screen.width) + 1),
-                    top: Math.floor((Math.random() * screen.height) + 1),
-                    width: Math.floor((Math.random() * (screen.width / 2)) + 1),
-                    height: Math.floor((Math.random() * (screen.height / 2)) + 1)});
+                    width: width,
+                    height: height,
+                    left: Math.floor((Math.random() * (screen.width - width) + 1)),
+                    top: Math.floor((Math.random() * (screen.height - height) + 1)),
+                });
             });
         });
     });
