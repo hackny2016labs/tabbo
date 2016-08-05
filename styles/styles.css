@@ -1,3 +1,9 @@
+html {
+    background: #000;
+    color: #EEE;
+    background-image:url("../background.jpeg");
+}
+
 .wrapper {
     text-align :center;
 }
@@ -20,11 +26,14 @@
     -webkit-align-content: flex-end;
     align-content: flex-end;
 }
+
 .screenshot {
-    opacity: 0.7;
+    position: relative;
+    border-radius: 5px;
+    /*opacity: 0.7;*/
     width: 300px;
     height: 250px;
-    margin: 5px;
+    margin: 5px 10px;
     background-size: cover;
     background-position: center;
     -webkit-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
@@ -38,5 +47,48 @@
     -webkit-box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
     box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
+}
 
+.screen-index {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 250px;
+    vertical-align: center;
+    top: 0;
+    left: 0;
+    font-size: 80px;
+    color: #ffffff;
+    text-shadow:0px 0.5px 1px #000000;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.screen-index:hover {
+    background-color: rgba(0,0,0,0);
+}
+
+.title-bar {
+    position: absolute;
+    top:0;
+    background-color: rgba(255,255,255,0.8);
+    width: 100%;
+    height: 30px;
+    overflow: hidden;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.title-bar img {
+    float: left;
+    height: 24px;
+    width: auto;
+    margin:3px;
+}
+
+.title-bar .screen-title {
+    color: #222;
+    line-height: 30px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 16px;
 }
