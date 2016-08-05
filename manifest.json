@@ -20,33 +20,33 @@
     "chrome://favicon/"
   ],
   "commands": {
-    "shift_left": {
+    "pop_off": {
+      "suggested_key": {
+        "default": "Ctrl+P"
+      },
+      "description": "Keybind to pop off the tab",
+      "global": false
+    },
+    "move_right": {
       "suggested_key": {
         "default": "Ctrl+Shift+Period"
       },
-      "description": "Keybind to move tab to the right",
-      "global": true
+      "description": "move current tab to the right",
+      "global": false
     },
-    "shift_right": {
+    "move_left": {
       "suggested_key": {
         "default": "Ctrl+Shift+Comma"
       },
-      "description": "Keybind to move tab to the left",
-      "global": true
-    },
-    "pop_off": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+P"
-      },
-      "description": "Keybind to pop off the tab",
-      "global": true
+      "description": "move current tab to the left",
+      "global": false
     },
     "send_tab": {
       "suggested_key": {
         "default": "Ctrl+Shift+S"
       },
-      "description": "Keybind to send the tab to another window",
-      "global": true
+      "description": "move current tab another window",
+      "global": false
     }
   }
 }
