@@ -5,14 +5,14 @@
   "description": "Tab Management Hotkeys",
   "version": "0.9.0",
   "icons": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "tabbo16.png",
+      "48": "tabbo48.png",
+      "128": "tabbo128.png"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["javascripts/vendor/mousetrap.min.js", "javascripts/content.js"]
+      "js": ["javascripts/vendor/mousetrap.min.js"]
     }
   ],
   "background": {
