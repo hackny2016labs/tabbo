@@ -35,7 +35,6 @@ chrome.extension.onConnect.addListener(function(port) {
                 popOffWindow();
                 break;
             case "send":
-                console.log('sending');
                 sendTab();
                 break;
             case "explode":
@@ -79,7 +78,11 @@ function sendTab() {
             chrome.tabs.onActivated.addListener(function onTabChange(response){
                 if(response.tabId !== newTab.id) {
                     chrome.tabs.onActivated.removeListener(onTabChange);
-                    chrome.tabs.remove(newTab.id); // TODO remove console errors for already deleted tab
+                    chrome.tabs.get(newTab.id, function() {
+                        if (!chrome.runtime.lastError) {
+                            chrome.tabs.remove(newTab.id);
+                        }
+                    });
                 }
             })
         });

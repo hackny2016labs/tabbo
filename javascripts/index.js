@@ -35,7 +35,16 @@ chrome.windows.getAll({populate:true},function(windows){
             }
         });
         chrome.tabs.get(parseInt(toSendId), function(tab){
-            document.title = "SEND: " + tab.title;
+            document.title = "SENDING TAB";
+            var sendingTitle = false;
+            setInterval(function() {
+                if(sendingTitle) {
+                    document.title = "SENDING TAB";
+                } else {
+                    document.title = '"' + tab.title + '"';
+                }
+                sendingTitle = !sendingTitle;
+            }, 1250);
             $("#current-tab").html(function() {
                 return $(
                 "<div class='title-bar'>" +
