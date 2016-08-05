@@ -22,16 +22,6 @@ chrome.commands.onCommand.addListener(function(command) {
     }
 });
 
-function moveTabWindow(response) {
-    var window_id = response.window_id;
-    console.log(window_id);
-    chrome.tabs.getSelected(function(tab) {
-        chrome.tabs.move(tab.id, {windowId: window_id, index: -1}, function(){
-            console.log("done!");
-        });
-    });
-}
-
 function moveTab(direction) {
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         chrome.tabs.getSelected(function(tab) {
@@ -55,32 +45,6 @@ function popOffWindow() {
     });
 }
 
-function moveTabWindowRequest(response) {
-    var images = [];
-    var ids = [];
-    chrome.windows.getAll({populate:true}, function(windows) {
-        windows.forEach(function(window){
-            chrome.tabs.captureVisibleTab(window.id, {quality: 50}, function (image) {
-                images.push(image);
-                ids.push(window.id);
-                if (images.length === windows.length) {
-                    sendImagesToContent(images, ids, response);
-                }
-            });
-        });
-    });
+function moveTabWindow() {
+
 }
-
-/*function moveHandler(window_id) {
-    chrome.tabs.getSelected(function(tab) {
-        chrome.tabs.move(tab.id, {windowId: window_id, index: -1}, function(){
-            console.log("done!");
-        });
-    });
-}*/
-
-/*function sendImagesToContent(images, ids, response) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-        chrome.tabs.sendMessage(tabs[0].id, {action: response.action, image: images, id: ids});
-    });
-}*/
