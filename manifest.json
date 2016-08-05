@@ -1,8 +1,12 @@
 {
   "manifest_version": 2,
-
+  "browser_action": {
+      "default_icon": "tabbo128.png",
+      "default_popup": "popup.html"
+  },
   "name": "Tabbo",
   "description": "Tab Management Hotkeys",
+  "short_name": "Tabbo – Tab Management Hotkeys (beta)",
   "version": "0.9.0",
   "icons": {
       "16": "tabbo16.png",
@@ -21,8 +25,8 @@
   "permissions": [
     "tabs",
     "https://ajax.googleapis.com/",
-    "<all_urls>",
-    "chrome://favicon/"
+    "chrome://favicon/",
+    "<all_urls>"
   ],
   "commands": {
     "pop_off": {

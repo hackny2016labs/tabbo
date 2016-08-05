@@ -32,10 +32,15 @@ chrome.commands.onCommand.addListener(function(command) {
 
 // listener to the client
 chrome.extension.onConnect.addListener(function(port) {
+    console.log('port',port);
     port.onMessage.addListener(function(msg) {
+        console.log('msg',msg);
         switch(msg){
             case "keybinds" :
                 chrome.tabs.create({url : "chrome://extensions/configureCommands"});
+                break;
+            case "instructions" :
+                chrome.tabs.create({url : "../instructions.html"});
                 break;
             default:
                 break;

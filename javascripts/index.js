@@ -46,8 +46,9 @@ function sendTab(windowId, tabId) {
     chrome.tabs.move(tabId, {windowId: windowId, index: -1})
 }
 
+var port = chrome.extension.connect({name: "tabbo in we go!"});
+
 $("#keybinds").click(function() {
     port.postMessage("keybinds");
 })
 
-var port = chrome.extension.connect({name: "tabbo in we go!"});
