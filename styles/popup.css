@@ -18,3 +18,14 @@ h4 {
 .cta:hover {
     background-color: #66150F;
 }
+
+.bonus {
+    background-color: transparent;
+    color: #B02519;
+}
+
+.bonus:hover {
+    background-color: transparent;
+    color: #66150F;
+}
+
