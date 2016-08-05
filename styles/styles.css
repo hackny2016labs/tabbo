@@ -1,11 +1,20 @@
+@font-face {
+  font-family: Montserrat;
+  src: url("./Montserrat-Regular.ttf");
+}
+
+
 html {
     background: #000;
     color: #EEE;
     background-image:url("../background.jpeg");
     position: relative;
     min-height:100vh;
-    font-family: 'Montserrat', Montserrat, sans-serif;
     margin: 0 3%;
+}
+
+body {
+    font-family: 'Montserrat', Montserrat, sans-serif;
 }
 
 .wrapper {
@@ -84,6 +93,7 @@ html {
 }
 
 .title-bar {
+    font-family: Arial, Helvetica, sans-serif;
     position: absolute;
     top:0;
     background-color: rgba(255,255,255,0.8);
@@ -193,9 +203,4 @@ html {
         width: 100%;
         max-width: 90%;
     }
-}
-
-@font-face {
-  font-family: Montserrat;
-  src: url("Montserrat-Regular.ttf");
 }

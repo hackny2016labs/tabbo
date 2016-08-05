@@ -15,16 +15,7 @@ chrome.commands.onCommand.addListener(function(command) {
             popOffWindow();
             break;
         case 'send_tab':
-            chrome.tabs.getSelected(function(tab) {
-                chrome.tabs.create({url : "../tabbo.html#"+tab.id}, function(newTab) {
-                    chrome.tabs.onActivated.addListener(function onTabChange(response){
-                        if(response.tabId !== newTab.id) {
-                            chrome.tabs.onActivated.removeListener(onTabChange);
-                            chrome.tabs.remove(newTab.id); // TODO remove console errors for already deleted tab
-                        }
-                    })
-                });
-            })
+            sendTab();
         default:
             break;
     }
@@ -32,15 +23,20 @@ chrome.commands.onCommand.addListener(function(command) {
 
 // listener to the client
 chrome.extension.onConnect.addListener(function(port) {
-    console.log('port',port);
     port.onMessage.addListener(function(msg) {
-        console.log('msg',msg);
         switch(msg){
             case "keybinds" :
                 chrome.tabs.create({url : "chrome://extensions/configureCommands"});
                 break;
             case "instructions" :
                 chrome.tabs.create({url : "../instructions.html"});
+                break;
+            case "pop":
+                popOffWindow();
+                break;
+            case "send":
+                console.log('sending');
+                sendTab();
                 break;
             default:
                 break;
@@ -69,4 +65,17 @@ function popOffWindow() {
     chrome.tabs.getSelected(function(tab){
         chrome.windows.create({tabId: tab.id});
     });
+}
+
+function sendTab() {
+    chrome.tabs.getSelected(function(tab) {
+        chrome.tabs.create({url : "../tabbo.html#"+tab.id}, function(newTab) {
+            chrome.tabs.onActivated.addListener(function onTabChange(response){
+                if(response.tabId !== newTab.id) {
+                    chrome.tabs.onActivated.removeListener(onTabChange);
+                    chrome.tabs.remove(newTab.id); // TODO remove console errors for already deleted tab
+                }
+            })
+        });
+    })
 }

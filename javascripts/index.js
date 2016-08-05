@@ -2,7 +2,6 @@ var toSendId = window.location.hash.slice(1);
 chrome.windows.getAll({populate:true},function(windows){
     chrome.windows.getCurrent(function(currentWindow) {
         var count = 1;
-
         windows.forEach(function(eachWindow) {
             if (windows.length === 1) {
                 $("#open-windows").append("<h1>No other open windows.</h1>")
@@ -35,15 +34,14 @@ chrome.windows.getAll({populate:true},function(windows){
                 });
             }
         });
-        var currentTab;
         chrome.tabs.get(parseInt(toSendId), function(tab){
+            document.title = "SEND: " + tab.title;
             $("#current-tab").html(function() {
-                console.log('tab',tab);
-                currentTab = $("<div class='title-bar'>" +
-                        "<img src='" + tab.favIconUrl + "'/>" +
-                        "<div class='screen-title'>" + tab.title + "</div>" +
-                    "</div>");
-                return currentTab ;
+                return $(
+                "<div class='title-bar'>" +
+                    "<img src='" + tab.favIconUrl + "'/>" +
+                    "<div class='screen-title'>" + tab.title + "</div>" +
+                "</div>");
             })
         })
     });
