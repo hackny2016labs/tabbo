@@ -58,8 +58,8 @@ function sendTab(windowId, tabId) {
 }
 
 var port = chrome.extension.connect({name: "Sample Communication"});
-port.postMessage("Hi BackGround");
-port.onMessage.addListener(function(msg) {
+// port.postMessage("Hi BackGround");
+// port.onMessage.addListener(function(msg) {
     console.log('window.location.hash.slice(1',window.location.hash.slice(1));
     var toSendId = window.location.hash.slice(1);
     chrome.windows.getAll({populate:true},function(windows){
@@ -77,4 +77,4 @@ port.onMessage.addListener(function(msg) {
             });
         });
     });
-});
+// });

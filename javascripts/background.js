@@ -3,18 +3,6 @@ var directions = {
     RIGHT: 1
 };
 
-chrome.extension.onConnect.addListener(function(port) {
-  console.log("Connected .....");
-  port.onMessage.addListener(function(msg) {
-        console.log("message recieved"+ msg);
-        port.postMessage("Hi Popup.js");
-        chrome.tabs.getSelected(function(tab) {
-            console.log('CURRENT TAB IN ONCONNECT', tab.id);
-        })
-  });
-});
-
-
 chrome.commands.onCommand.addListener(function(command) {
     switch(command) {
         case 'move_right':
@@ -27,11 +15,15 @@ chrome.commands.onCommand.addListener(function(command) {
             popOffWindow();
             break;
         case 'send_tab':
-            console.log("sending tab!!");
-            console.log('command',command);
             chrome.tabs.getSelected(function(tab) {
-                console.log('KEY COMMAND tab.id',tab.id);
-                chrome.tabs.create({url : "../tabbo.html#"+tab.id});
+                chrome.tabs.create({url : "../tabbo.html#"+tab.id}, function(newTab) {
+                    chrome.tabs.onActivated.addListener(function onTabChange(response){
+                        if(response.tabId !== newTab.id) {
+                            chrome.tabs.onActivated.removeListener(onTabChange);
+                            chrome.tabs.remove(newTab.id); // TODO remove console errors for already deleted tab
+                        }
+                    })
+                });
             })
         default:
             break;
