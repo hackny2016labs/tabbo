@@ -1,4 +1,42 @@
-html {
-    height: 600px;
-    width: 800px;
+.wrapper {
+    text-align :center;
+}
+
+#open-windows {
+    margin: 20px auto;
+    padding: 20px 0 0;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-content: flex-end;
+    align-content: flex-end;
+}
+.screenshot {
+    opacity: 0.7;
+    width: 300px;
+    height: 250px;
+    margin: 5px;
+    background-size: cover;
+    background-position: center;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+    -webkit-transition: all 0.2s ease;
+}
+
+.screenshot:hover {
+    opacity: 1;
+    -webkit-box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 12px 1px rgba(0,0,0,0.75);
+
 }
