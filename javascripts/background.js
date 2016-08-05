@@ -38,6 +38,12 @@ chrome.extension.onConnect.addListener(function(port) {
                 console.log('sending');
                 sendTab();
                 break;
+            case "explode":
+                explodeTabs();
+                break;
+            case "join":
+                joinTabs();
+                break;
             default:
                 break;
         }
@@ -78,4 +84,45 @@ function sendTab() {
             })
         });
     })
+}
+
+function explodeTabs() {
+    chrome.windows.getAll({populate:true}, function(chromeWindows){
+        chromeWindows.forEach(function(chromeWindow){
+            chromeWindow.tabs.forEach(function(tab){
+                chrome.windows.create({
+                    tabId: tab.id,
+                    left: Math.floor((Math.random() * screen.width) + 1),
+                    top: Math.floor((Math.random() * screen.height) + 1),
+                    width: Math.floor((Math.random() * (screen.width / 2)) + 1),
+                    height: Math.floor((Math.random() * (screen.height / 2)) + 1)});
+            });
+        });
+    });
+}
+
+function joinTabs() {
+    chrome.windows.getAll({populate:true}, function(chromeWindows){
+        var isFirstWindow = true;
+        var firstWindowId = null;
+        chromeWindows.forEach(function(chromeWindow){
+            if(isFirstWindow){
+                isFirstWindow = false;
+                firstWindowId = chromeWindow.id;
+
+                // make it fullscreen
+                chrome.windows.update(firstWindowId, {
+                    left: 0,
+                    top: 0,
+                    width: screen.width,
+                    height: screen.height
+                });
+            }
+            else{
+                chromeWindow.tabs.forEach(function(tab){
+                    chrome.tabs.move(tab.id, {windowId: firstWindowId, index: -1});
+                });
+            }
+        });
+    });
 }

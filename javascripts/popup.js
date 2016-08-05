@@ -15,3 +15,11 @@ $("#pop").click(function() {
 $("#send").click(function() {
     port.postMessage("send");
 });
+
+$("#explode").click(function() {
+    port.postMessage("explode");
+});
+
+$("#join").click(function() {
+    port.postMessage("join");
+});
