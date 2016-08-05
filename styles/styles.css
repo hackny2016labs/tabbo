@@ -24,7 +24,7 @@ html {
 }
 #open-windows {
     text-align: left;
-    margin: 0 auto 50px;
+    margin: 0 auto 80px;
     padding: 20px 0 0;
     display: -webkit-flex;
     display: flex;
@@ -130,14 +130,14 @@ html {
     text-decoration: underline;
 }
 
-#current-tab {
+#current-tab-wrapper {
     margin: 70px auto 0;
-    max-width: 310px;
-    padding: 9px;
-    text-transform: uppercase;
+    text-align: center;
+}
+#current-tab {
+    margin: 0 auto;
+    max-width:300px;
     font-size: 20px;
-    border: 3px #eee solid;
-    border-radius: 5px;
     background-color: rgba(255,255,255,0.2);
     color: #eee;
     font-size: 30px;
@@ -146,6 +146,12 @@ html {
     text-align: center;
 }
 
+#current-tab-wrapper h2 {
+    text-transform: uppercase;
+}
+#current-tab .title-bar {
+    position: initial;
+}
 #hackny {
     position: absolute;
     bottom:0;
