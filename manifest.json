@@ -22,26 +22,33 @@
     "<all_urls>"
   ],
   "commands": {
-    "shift_left": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+Left"
-      },
-      "description": "Keybind to move tab to the right",
-      "global": true
-    },
-    "shift_right": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+Right"
-      },
-      "description": "Keybind to move tab to the left",
-      "global": true
-    },
     "pop_off": {
       "suggested_key": {
-        "default": "Ctrl+Shift+P"
+        "default": "Ctrl+P"
       },
       "description": "Keybind to pop off the tab",
-      "global": true
+      "global": false 
+    },
+    "move_right": {
+      "suggested_key": {
+        "default": "Ctrl+L"
+      },
+      "description": "move current tab to the right",
+      "global": false
+    },
+    "move_left": {
+      "suggested_key": {
+        "default": "Ctrl+J"
+      },
+      "description": "move current tab to the left",
+      "global": false
+    },
+    "move_tab_window": {
+      "suggested_key": {
+        "default": "Ctrl+O"
+      },
+      "description": "move current tab another window",
+      "global": false
     }
   }
 }
