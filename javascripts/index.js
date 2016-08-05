@@ -24,6 +24,12 @@ function sendTab(windowId, tabId) {
     })
 }
 
+$("#keybinds").click(function() {
+    port.postMessage("keybinds");
+})
+
+var port = chrome.extension.connect({name: "Sample Communication"});
+// port.onMessage.addListener(function(msg) {
 
 // (function(){
 //     $('.test_1').on('click',function() {

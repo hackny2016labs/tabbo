@@ -30,6 +30,15 @@ chrome.commands.onCommand.addListener(function(command) {
     }
 });
 
+// opens up keybinds
+chrome.extension.onConnect.addListener(function(port) {
+    port.onMessage.addListener(function(msg) {
+        if (msg === "keybinds") {
+            chrome.tabs.create({url : "chrome://extensions/configureCommands"});
+        }
+    });
+});
+
 function moveTab(direction) {
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         chrome.tabs.getSelected(function(tab) {
