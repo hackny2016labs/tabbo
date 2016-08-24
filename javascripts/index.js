@@ -21,6 +21,9 @@ chrome.windows.getAll({populate:true},function(windows){
                                             "<div class='screen-title'>" + tab.title + "</div>" +
                                         "</div>" +
                                         "<div class='screen-index'>" + count + "</div>" +
+                                        "<div class='tab-count'>" +
+                                            eachWindow.tabs.length + (eachWindow.tabs.length === 1 ? " tab" : " tabs") +
+                                        "</div>" +
                                     "</div>"
                                 );
                                 count++;
@@ -56,6 +59,18 @@ chrome.windows.getAll({populate:true},function(windows){
     });
 });
 
+Mousetrap.bind("escape", function() {
+    chrome.tabs.getSelected(function(tab){
+        chrome.tabs.remove(tab.id);
+    });
+});
+
+$("#cancel").click(function() {
+    chrome.tabs.getSelected(function(tab){
+        chrome.tabs.remove(tab.id);
+    });
+})
+
 function selectWindow(eachWindow, toSendId) {
     chrome.tabs.getSelected(function(tab){
         chrome.tabs.remove(tab.id);
@@ -64,7 +79,7 @@ function selectWindow(eachWindow, toSendId) {
 }
 
 function sendTab(windowId, tabId) {
-    chrome.tabs.move(tabId, {windowId: windowId, index: -1})
+    chrome.tabs.move(tabId, {windowId: windowId, index: -1});
 }
 
 var port = chrome.extension.connect({name: "tabbo in we go!"});
