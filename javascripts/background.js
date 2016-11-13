@@ -85,6 +85,8 @@ function sendTabManager() {
                         return (filterWindow.id !== tab.windowId);
                     });
                     chrome.tabs.move(tab.id, {windowId: otherWindow[0].id, index: -1});
+                    chrome.windows.update(otherWindow[0].id, {focused: true});
+                    chrome.tabs.update(tab.id, {selected: true});
                     return;
                 });
             } else {
