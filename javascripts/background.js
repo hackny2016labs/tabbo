@@ -81,7 +81,6 @@ function sendTabManager() {
             } else if (windows.length === 2) {
                 // send tab to only other window
                 chrome.tabs.getSelected(function(tab) {
-                    console.log('tab',tab);
                     var otherWindow = windows.filter(function(filterWindow) {
                         return (filterWindow.id !== tab.windowId);
                     });
