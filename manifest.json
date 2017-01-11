@@ -7,7 +7,7 @@
   "name": "Tabbo",
   "description": "Tab Management Hotkeys",
   "short_name": "Tabbo – Tab Management Hotkeys",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "icons": {
       "16": "tabbo16.png",
       "48": "tabbo48.png",
