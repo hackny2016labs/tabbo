@@ -90,23 +90,38 @@ const utils = {
 
 function moveTab(direction) {
 	Promise.all([
-		utils.tabQuery({currentWindow: true}),
-		utils.getCurrentTab(),
+		utils.tabQuery({currentWindow: true, pinned: true}),
+		utils.tabQuery({currentWindow: true, pinned: false}),
+		utils.getCurrentTab()
 	]).then((resolution) => {
-		const tabs = resolution[0];
-		const tab = resolution[1];
-		const newTab = (direction === directions.LEFT) ? prevTab(tab, tabs) : nextTab(tab, tabs);
+		const pinnedTabs = resolution[0];
+		const unpinnedTabs = resolution[1];
+		const tabs = Array.prototype.concat(pinnedTabs, unpinnedTabs);
+		const tab = resolution[2];
 
-		chrome.tabs.move(tab.id, {index: newTab.index});
+		const currentIndex = tab.index;
+		let newIndex, lowerBound, upperBound;
+
+		if (tab.pinned) {
+			lowerBound = 0;
+			upperBound = pinnedTabs.length - 1;
+		} else {
+			lowerBound = pinnedTabs.length;
+			upperBound = tabs.length - 1;
+		}
+
+		newIndex = (direction === directions.LEFT) ? prevTab(lowerBound, upperBound, currentIndex) : nextTab(lowerBound, upperBound, currentIndex);
+
+		chrome.tabs.move(tab.id, {index: newIndex});
 	});
 }
 
-function prevTab(tab, tabs) {
-	return tab.index === 0 ? tabs[tabs.length - 1] : tabs[tab.index - 1];
+function prevTab(lowerBound, upperBound, currentIndex) {
+	return (currentIndex === lowerBound) ? upperBound : currentIndex - 1;
 }
 
-function nextTab(tab, tabs) {
-	return tab.index == tabs.length - 1 ? tabs[0] : tabs[tab.index + 1];
+function nextTab(lowerBound, upperBound, currentIndex) {
+	return (currentIndex === upperBound) ? lowerBound : currentIndex + 1;
 }
 
 function popOffWindow() {
