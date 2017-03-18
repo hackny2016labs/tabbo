@@ -1,3 +1,5 @@
+const utils = window.utils;
+
 const directions = {
 	LEFT: 0,
 	RIGHT: 1
@@ -25,22 +27,22 @@ chrome.commands.onCommand.addListener((command) => {
 chrome.extension.onConnect.addListener((port) => {
 	port.onMessage.addListener((msg) => {
 		switch(msg) {
-			case "keybinds" :
-				chrome.tabs.create({url : "chrome://extensions/configureCommands"});
+			case 'keybinds' :
+				chrome.tabs.create({url : 'chrome://extensions/configureCommands'});
 				break;
-			case "instructions" :
-				chrome.tabs.create({url : "../instructions.html"});
+			case 'instructions' :
+				chrome.tabs.create({url : '../instructions.html'});
 				break;
-			case "pop":
+			case 'pop':
 				popOffWindow();
 				break;
-			case "send":
+			case 'send':
 				sendTabManager();
 				break;
-			case "explode":
+			case 'explode':
 				explodeTabs();
 				break;
-			case "join":
+			case 'join':
 				joinTabs();
 				break;
 			default:
@@ -48,45 +50,6 @@ chrome.extension.onConnect.addListener((port) => {
 		}
 	});
 });
-
-// Common functions wrapped in promises to avoid callback hell
-const utils = {
-	tabQuery: (options) => {
-		return new Promise((resolve, reject) => {
-			chrome.tabs.query(options, (tabs) => {
-				resolve(tabs);
-			});
-		});
-	},
-	getCurrentTab: () => {
-		return new Promise((resolve, reject) => {
-			chrome.tabs.getSelected((tab) => {
-				resolve(tab);
-			});
-		});
-	},
-	getAllWindows: (options) => {
-		return new Promise((resolve, reject) => {
-			chrome.windows.getAll(options, (windows) => {
-				resolve(windows);
-			});
-		});
-	},
-	getCurrentWindow: () => {
-		return new Promise((resolve, reject) => {
-			chrome.windows.getCurrent((currentWindow) => {
-				resolve(currentWindow);
-			});
-		});
-	},
-	createTab: (options) => {
-		return new Promise((resolve, reject) => {
-			chrome.tabs.create(options, (newTab) => {
-				resolve(newTab);
-			});
-		});
-	}
-};
 
 function moveTab(direction) {
 	Promise.all([
