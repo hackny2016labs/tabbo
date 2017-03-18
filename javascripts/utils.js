@@ -1,4 +1,4 @@
-const utils = {
+window.utils = {
 	tabQuery: (options) => {
 		return new Promise((resolve, reject) => {
 			chrome.tabs.query(options, (tabs) => {
@@ -11,6 +11,11 @@ const utils = {
 			chrome.tabs.getSelected((tab) => {
 				resolve(tab);
 			});
+		});
+	},
+	getTab: (id) => {
+		return new Promise((resolve, reject) => {
+			chrome.tabs.get(id, resolve);
 		});
 	},
 	getAllWindows: (options) => {
@@ -33,7 +38,15 @@ const utils = {
 				resolve(newTab);
 			});
 		});
+	},
+	screenshotTab: (id, options) => {
+		return new Promise((resolve, reject) => {
+			chrome.tabs.captureVisibleTab(id, options, resolve);
+		});
+	},
+	getSelectedTab: () => {
+		return new Promise((resolve, reject) => {
+			chrome.tabs.getSelected(resolve);
+		});
 	}
 };
-
-window.utils = utils;

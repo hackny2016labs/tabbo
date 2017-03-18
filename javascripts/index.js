@@ -1,80 +1,92 @@
+const utils = window.utils;
 const toSendId = window.location.hash.slice(1);
-chrome.windows.getAll({populate:true},function(windows){
-	chrome.windows.getCurrent(function(currentWindow) {
-		var count = 1;
-		windows.forEach(function(eachWindow) {
-			if (windows.length === 1) {
-				$("#open-windows").append("<h1>No other open windows.</h1>")
-			} else if(eachWindow.id !== currentWindow.id) {
-				chrome.tabs.captureVisibleTab(eachWindow.id, {quality: 50}, function (image) {
-					Mousetrap.bind(count.toString(), function () {
-						selectWindow(eachWindow, toSendId)
-					});
-					$("#open-windows").append(function() {
-						var element;
-						eachWindow.tabs.forEach(function(tab) {
-							if (tab.active) {
-								element = $(
-									"<div class='screenshot' style='background-image:url(" + image + ")''>" +
-									"<div class='title-bar'>" +
-									"<img src='" + tab.favIconUrl + "'/>" +
-									"<div class='screen-title'>" + tab.title + "</div>" +
-									"</div>" +
-									"<div class='screen-index'>" + count + "</div>" +
-									"<div class='tab-count'>" +
-									eachWindow.tabs.length + (eachWindow.tabs.length === 1 ? " tab" : " tabs") +
-									"</div>" +
-									"</div>"
-								);
-								count++;
-							}
-						})
-						element.on('click', function() {
-							selectWindow(eachWindow, toSendId);
-						});
-						return element;
-					});
+
+Promise.all([
+	utils.getAllWindows({populate: true}),
+	utils.getCurrentWindow()
+]).then((resolution) => {
+	const windows = resolution[0];
+	const current = resolution[1];
+	let count = 1;
+
+	const openWindows = $('#open-windows');
+
+	if (windows.length === 1) {
+		openWindows.append('<h1>No other open windows.</h1>');
+	}
+
+	windows.forEach((w) => {
+		if (w.id === current.id) {
+			return;
+		}
+
+		utils.screenshotTab(w.id, {quality: 50}).then((img) => {
+			Mousetrap.bind(count.toString(), () => {
+				selectWindow(w, toSendId);
+			});
+
+			openWindows.append(() => {
+				let element;
+
+				w.tabs.forEach((tab) => {
+					if (tab.active) {
+						element = $(
+							`<div class="screenshot" style="background-image: url(${img})">`+
+							`<div class="title-bar"> <img src="${tab.favIconUrl}"/>` +
+							`<div class="screen-title">${tab.title}</div></div>` +
+							`<div class="screen-index">${count}</div>` +
+							`<div class="tab-count">${w.tabs.length + (w.tabs.length === 1 ? " tab" : " tabs")}` +
+							`</div></div>`
+						);
+						count++;
+					}
 				});
-			}
+
+				element.on('click', () => {
+					selectWindow(w, toSendId);
+				});
+
+				return element;
+			});
 		});
-		chrome.tabs.get(parseInt(toSendId), function(tab){
-			document.title = "SENDING TAB";
-			var sendingTitle = false;
-			setInterval(function() {
-				if(sendingTitle) {
-					document.title = "SENDING TAB";
-				} else {
-					document.title = '"' + tab.title + '"';
-				}
-				sendingTitle = !sendingTitle;
-			}, 1250);
-			$("#current-tab").html(function() {
-				return $(
-					"<div class='title-bar'>" +
-					"<img src='" + tab.favIconUrl + "'/>" +
-					"<div class='screen-title'>" + tab.title + "</div>" +
-					"</div>");
-			})
-		})
+	});
+
+	utils.getTab(toSendId).then((tab) => {
+		document.title = 'SENDING TAB';
+		let sendingTitle = false;
+		setInterval(() => {
+			if (sendingTitle) {
+				document.title = 'SENDING TAB';
+			} else {
+				document.title = `${tab.title}`
+			}
+			sendingTitle = !sendingTitle;
+		}, 1250);
+
+		$('#current-tab').html(() => $(
+			`<div class="title-bar"><img src="${tab.favIconUrl}"/>` +
+			`<div class="screen-title">${tab.title}</div></div>`
+		));
 	});
 });
 
-Mousetrap.bind("escape", function() {
-	chrome.tabs.getSelected(function(tab){
+Mousetrap.bind('escape', () => {
+	utils.getSelectedTab().then((tab) => {
 		chrome.tabs.remove(tab.id);
 	});
 });
 
-$("#cancel").click(function() {
-	chrome.tabs.getSelected(function(tab){
+document.querySelector('#cancel').addEventListener('click', () => {
+	utils.getSelectedTab().then((tab) => {
 		chrome.tabs.remove(tab.id);
 	});
-})
+});
 
 function selectWindow(eachWindow, toSendId) {
-	chrome.tabs.getSelected(function(tab){
+	utils.getSelectedTab().then((tab) => {
 		chrome.tabs.remove(tab.id);
 	});
+
 	sendTab(eachWindow.id, parseInt(toSendId));
 }
 
@@ -84,9 +96,8 @@ function sendTab(windowId, tabId) {
 	chrome.tabs.update(tabId, {selected: true});
 }
 
-var port = chrome.extension.connect({name: "tabbo in we go!"});
+const port = chrome.runtime.connect({name: 'tabbo in we go!'});
 
-$("#keybinds").click(function() {
-	port.postMessage("keybinds");
-})
-
+document.querySelector('#keybinds').addEventListener('click', () => {
+	port.postMessage('keybinds');
+});
