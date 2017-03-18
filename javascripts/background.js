@@ -1,154 +1,182 @@
-var directions = {
-    LEFT: 0,
-    RIGHT: 1
+const utils = window.utils;
+
+const directions = {
+	LEFT: 0,
+	RIGHT: 1
 };
 
-chrome.commands.onCommand.addListener(function(command) {
-    switch(command) {
-        case 'move_right':
-            moveTab(directions.RIGHT);
-            break;
-        case 'move_left':
-            moveTab(directions.LEFT);
-            break;
-        case 'pop_off':
-            popOffWindow();
-            break;
-        case 'send_tab':
-            sendTabManager();
-        default:
-            break;
-    }
+chrome.commands.onCommand.addListener((command) => {
+	switch(command) {
+		case 'move_right':
+			moveTab(directions.RIGHT);
+			break;
+		case 'move_left':
+			moveTab(directions.LEFT);
+			break;
+		case 'pop_off':
+			popOffWindow();
+			break;
+		case 'send_tab':
+			sendTabManager();
+		default:
+			break;
+	}
 });
 
 // listener to the client
-chrome.extension.onConnect.addListener(function(port) {
-    port.onMessage.addListener(function(msg) {
-        switch(msg){
-            case "keybinds" :
-                chrome.tabs.create({url : "chrome://extensions/configureCommands"});
-                break;
-            case "instructions" :
-                chrome.tabs.create({url : "../instructions.html"});
-                break;
-            case "pop":
-                popOffWindow();
-                break;
-            case "send":
-                sendTabManager();
-                break;
-            case "explode":
-                explodeTabs();
-                break;
-            case "join":
-                joinTabs();
-                break;
-            default:
-                break;
-        }
-    });
+chrome.extension.onConnect.addListener((port) => {
+	port.onMessage.addListener((msg) => {
+		switch(msg) {
+			case 'keybinds' :
+				chrome.tabs.create({url : 'chrome://extensions/configureCommands'});
+				break;
+			case 'instructions' :
+				chrome.tabs.create({url : '../instructions.html'});
+				break;
+			case 'pop':
+				popOffWindow();
+				break;
+			case 'send':
+				sendTabManager();
+				break;
+			case 'explode':
+				explodeTabs();
+				break;
+			case 'join':
+				joinTabs();
+				break;
+			default:
+				break;
+		}
+	});
 });
 
 function moveTab(direction) {
-    chrome.tabs.query({currentWindow: true}, function(tabs) {
-        chrome.tabs.getSelected(function(tab) {
-            var newTab = (direction === directions.LEFT) ? prevTab(tab, tabs) : nextTab(tab, tabs);
-            chrome.tabs.move(tab.id, {index: newTab.index});
-        });
-    });
+	Promise.all([
+		utils.tabQuery({currentWindow: true, pinned: true}),
+		utils.tabQuery({currentWindow: true, pinned: false}),
+		utils.getCurrentTab()
+	]).then((resolution) => {
+		const pinnedTabs = resolution[0];
+		const unpinnedTabs = resolution[1];
+		const tabs = Array.prototype.concat(pinnedTabs, unpinnedTabs);
+		const tab = resolution[2];
+
+		const currentIndex = tab.index;
+		let newIndex, lowerBound, upperBound;
+
+		if (tab.pinned) {
+			lowerBound = 0;
+			upperBound = pinnedTabs.length - 1;
+		} else {
+			lowerBound = pinnedTabs.length;
+			upperBound = tabs.length - 1;
+		}
+
+		newIndex = (direction === directions.LEFT) ? prevTab(lowerBound, upperBound, currentIndex) : nextTab(lowerBound, upperBound, currentIndex);
+
+		chrome.tabs.move(tab.id, {index: newIndex});
+	});
 }
 
-function prevTab(tab, tabs) {
-    return tab.index === 0 ? tabs[tabs.length - 1] : tabs[tab.index - 1];
+function prevTab(lowerBound, upperBound, currentIndex) {
+	return (currentIndex === lowerBound) ? upperBound : currentIndex - 1;
 }
 
-function nextTab(tab, tabs) {
-    return tab.index == tabs.length - 1 ? tabs[0] : tabs[tab.index + 1];
+function nextTab(lowerBound, upperBound, currentIndex) {
+	return (currentIndex === upperBound) ? lowerBound : currentIndex + 1;
 }
 
 function popOffWindow() {
-    chrome.tabs.getSelected(function(tab){
-        chrome.windows.create({tabId: tab.id});
-    });
+	utils.getCurrentTab().then((tab) => {
+		chrome.windows.create({tabId: tab.id});
+	});
 }
 
 function sendTabManager() {
-    chrome.windows.getAll({populate:true},function(windows){
-        chrome.windows.getCurrent(function(currentWindow) {
-            if(windows.length === 1) {
-                // do nothing
-                return;
-            } else if (windows.length === 2) {
-                // send tab to only other window
-                chrome.tabs.getSelected(function(tab) {
-                    var otherWindow = windows.filter(function(filterWindow) {
-                        return (filterWindow.id !== tab.windowId);
-                    });
-                    chrome.tabs.move(tab.id, {windowId: otherWindow[0].id, index: -1});
-                    chrome.windows.update(otherWindow[0].id, {focused: true});
-                    chrome.tabs.update(tab.id, {selected: true});
-                    return;
-                });
-            } else {
-                chrome.tabs.getSelected(function(tab) {
-                    chrome.tabs.create({url : "../tabbo.html#"+tab.id}, function(newTab) {
-                        chrome.tabs.onActivated.addListener(function onTabChange(response){
-                            if(response.tabId !== newTab.id) {
-                                chrome.tabs.onActivated.removeListener(onTabChange);
-                                chrome.tabs.get(newTab.id, function() {
-                                    if (!chrome.runtime.lastError) {
-                                        chrome.tabs.remove(newTab.id);
-                                    }
-                                });
-                            }
-                        })
-                    });
-                });
-            }
-        })
-    });
+	Promise.all([
+		utils.getAllWindows({populate: true}),
+		utils.getCurrentWindow()
+	]).then((resolution) => {
+		const windows = resolution[0];
+		const currentWindow = resolution[1];
+
+		if (windows.length === 1) {
+			// do nothing
+			return;
+		} else if (windows.length === 2) {
+			// send tab to only other window
+			utils.getCurrentTab().then((tab) => {
+				const otherWindow = windows.filter((filterWindow) => {
+					return (filterWindow.id !== tab.windowId);
+				});
+
+				chrome.tabs.move(tab.id, {windowId: otherWindow[0].id, index: -1});
+				chrome.windows.update(otherWindow[0].id, {focused: true});
+				chrome.tabs.update(tab.id, {selected: true});
+			});
+		} else {
+			utils.getCurrentTab().then((tab) => {
+				return utils.createTab({url : `../tabbo.html#${tab.id}`});
+			}).then(() => {
+				const onTabChange = (response) => {
+					if (response.tabId !== newTab.id) {
+						chrome.tabs.onActivated.removeListener(onTabChange);
+						chrome.tabs.get(newTab.id, () => {
+							if (!chrome.runtime.lastError) {
+								chrome.tabs.remove(newTab.id);
+							}
+						});
+					}
+				};
+
+				chrome.tabs.onActivated.addListener(onTabChange);
+			});
+		}
+	});
 }
 
 function explodeTabs() {
-    chrome.windows.getAll({populate:true}, function(chromeWindows){
-        chromeWindows.forEach(function(chromeWindow){
-            chromeWindow.tabs.forEach(function(tab){
-                var width = Math.floor((Math.random() * (screen.width * 0.75)) + 1);
-                var height = Math.floor((Math.random() * (screen.height * 0.75)) + 1);
-                chrome.windows.create({
-                    tabId: tab.id,
-                    width: width,
-                    height: height,
-                    left: Math.floor((Math.random() * (screen.width - width) + 1)),
-                    top: Math.floor((Math.random() * (screen.height - height) + 1)),
-                });
-            });
-        });
-    });
+	utils.getAllWindows({populate: true}).then((chromeWindows) => {
+		chromeWindows.forEach((chromeWindow) => {
+			chromeWindow.tabs.forEach((tab) => {
+				const width = Math.floor((Math.random() * (screen.width * 0.75)) + 1);
+				const height = Math.floor((Math.random() * (screen.height * 0.75)) + 1);
+
+				chrome.windows.create({
+					tabId: tab.id,
+					width: width,
+					height: height,
+					left: Math.floor(Math.random() * (screen.width - width) + 1),
+					top: Math.floor(Math.random() * (screen.height - height) + 1),
+				});
+			});
+		});
+	});
 }
 
 function joinTabs() {
-    chrome.windows.getAll({populate:true}, function(chromeWindows){
-        var isFirstWindow = true;
-        var firstWindowId = null;
-        chromeWindows.forEach(function(chromeWindow){
-            if(isFirstWindow){
-                isFirstWindow = false;
-                firstWindowId = chromeWindow.id;
+	utils.getAllWindows({populate: true}).then((chromeWindows) => {
+		let isFirstWindow = true;
+		let firstWindowId = null;
 
-                // make it fullscreen
-                chrome.windows.update(firstWindowId, {
-                    left: 0,
-                    top: 0,
-                    width: screen.width,
-                    height: screen.height
-                });
-            }
-            else{
-                chromeWindow.tabs.forEach(function(tab){
-                    chrome.tabs.move(tab.id, {windowId: firstWindowId, index: -1});
-                });
-            }
-        });
-    });
+		chromeWindows.forEach((chromeWindow) =>{
+			if (isFirstWindow) {
+				isFirstWindow = false;
+				firstWindowId = chromeWindow.id;
+
+				// make it fullscreen
+				chrome.windows.update(firstWindowId, {
+					left: 0,
+					top: 0,
+					width: screen.width,
+					height: screen.height
+				});
+			} else {
+				chromeWindow.tabs.forEach((tab) => {
+					chrome.tabs.move(tab.id, {windowId: firstWindowId, index: -1});
+				});
+			}
+		});
+	});
 }
