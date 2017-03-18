@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"browser_action": {
-		"default_icon": "tabbo128.png",
+		"default_icon": "images/tabbo128.png",
 		"default_popup": "popup.html"
 	},
 	"name": "Tabbo",
@@ -9,9 +9,9 @@
 	"short_name": "Tabbo – Tab Management Hotkeys",
 	"version": "0.9.4",
 	"icons": {
-		"16": "tabbo16.png",
-		"48": "tabbo48.png",
-		"128": "tabbo128.png"
+		"16": "images/tabbo16.png",
+		"48": "images/tabbo48.png",
+		"128": "images/tabbo128.png"
 	},
 	"content_scripts": [
 		{
