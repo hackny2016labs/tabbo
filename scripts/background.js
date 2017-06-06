@@ -88,8 +88,12 @@ function nextTab(lowerBound, upperBound, currentIndex) {
 }
 
 function popOffWindow() {
-	utils.getCurrentTab().then((tab) => {
-		chrome.windows.create({tabId: tab.id});
+	utils.getCurrentWindow({populate: true}).then((w) => {
+		if (w.tabs.length !== 1) {
+			utils.getCurrentTab().then((tab) => {
+				chrome.windows.create({tabId: tab.id});
+			});
+		}
 	});
 }
 
@@ -118,14 +122,18 @@ function sendTabManager() {
 		} else {
 			utils.getCurrentTab().then((tab) => {
 				return utils.createTab({url : `../tabbo.html#${tab.id}`});
-			}).then(() => {
+			}).then((newTab) => {
+				console.log(newTab);
 				const onTabChange = (response) => {
 					if (response.tabId !== newTab.id) {
 						chrome.tabs.onActivated.removeListener(onTabChange);
-						chrome.tabs.get(newTab.id, () => {
+
+						utils.getTab(newTab.id).then(() => {
 							if (!chrome.runtime.lastError) {
 								chrome.tabs.remove(newTab.id);
 							}
+						}, (e) => {
+							console.error(e);
 						});
 					}
 				};
