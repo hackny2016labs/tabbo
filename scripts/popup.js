@@ -1,38 +1,41 @@
 const port = chrome.extension.connect({name: 'popup'});
 
-$('#keybinds').click(() => {
+document.querySelector('#keybinds').addEventListener('click', () => {
 	port.postMessage('keybinds');
 });
 
-$('#instructions').click(() => {
+document.querySelector('#instructions').addEventListener('click', () => {
 	port.postMessage('instructions');
 });
 
-$('#pop').click(() => {
+document.querySelector('#pop').addEventListener('click', () => {
 	port.postMessage('pop');
 });
 
-$('#send').click(() => {
+document.querySelector('#send').addEventListener('click', () => {
 	port.postMessage('send');
 });
 
-$('#join').click(() => {
-	port.postMessage('join');
+document.querySelector('#send').addEventListener('click', () => {
+	port.postMessage('send');
 });
 
 let bonusClicked = 0;
-$('#bonus').click(() => {
-	bonusClicked+=1;
+const bonusElem = document.querySelector('#bonus');
+
+document.querySelector('#bonus').addEventListener('click', () => {
+	bonusClicked += 1;
+
 	if (bonusClicked === 1) {
-		$('#bonus').html('stop it');
+		bonusElem.innerHTML('stop it');
 	} else if (bonusClicked === 2) {
-		$('#bonus').html('I\'m warning you');
+		bonusElem.innerHTML('I\'m warning you');
 	} else if (bonusClicked === 3) {
-		$('#bonus').html('last warning...');
+		bonusElem.innerHTML('last warning...');
 	}
 
 	if (bonusClicked > 3) {
-		$('#bonus').html('explode!!');
+		bonusElem.innerHTML('explode!!');
 		port.postMessage('explode');
 	}
 });
