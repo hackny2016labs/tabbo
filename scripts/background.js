@@ -88,9 +88,12 @@ function nextTab(lowerBound, upperBound, currentIndex) {
 }
 
 function popOffWindow() {
-	// TODO check if only one tab in window
-	utils.getCurrentTab().then((tab) => {
-		chrome.windows.create({tabId: tab.id});
+	utils.getCurrentWindow({populate: true}).then((w) => {
+		if (w.tabs.length !== 1) {
+			utils.getCurrentTab().then((tab) => {
+				chrome.windows.create({tabId: tab.id});
+			});
+		}
 	});
 }
 
