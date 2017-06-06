@@ -25,9 +25,9 @@ window.utils = {
 			});
 		});
 	},
-	getCurrentWindow: () => {
+	getCurrentWindow: (options) => {
 		return new Promise((resolve, reject) => {
-			chrome.windows.getCurrent((currentWindow) => {
+			chrome.windows.getCurrent(options, (currentWindow) => {
 				resolve(currentWindow);
 			});
 		});
