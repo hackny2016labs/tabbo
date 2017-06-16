@@ -31,4 +31,7 @@ Original creators:
 - [Andy Wang](https://github.com/ownzandy)
 - [Biggie Emmanuel](https://github.com/bigolu)
 
+Continued Support:
+- [Jun Woo Shin](https://github.com/jwoos)
+
 Forked to keep updated with features and bug fixes.
