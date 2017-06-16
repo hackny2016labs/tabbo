@@ -1,26 +1,26 @@
 {
 	"manifest_version": 2,
 	"browser_action": {
-		"default_icon": "tabbo128.png",
+		"default_icon": "images/tabbo128.png",
 		"default_popup": "popup.html"
 	},
 	"name": "Tabbo",
 	"description": "Tab Management Hotkeys",
 	"short_name": "Tabbo – Tab Management Hotkeys",
-	"version": "0.9.4",
+	"version": "0.9.5",
 	"icons": {
-		"16": "tabbo16.png",
-		"48": "tabbo48.png",
-		"128": "tabbo128.png"
+		"16": "images/tabbo16.png",
+		"48": "images/tabbo48.png",
+		"128": "images/tabbo128.png"
 	},
 	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["javascripts/vendor/mousetrap.min.js", "javascripts/utils.js"]
+			"js": ["scripts/utils.js"]
 		}
 	],
 	"background": {
-		"scripts": ["javascripts/utils.js", "javascripts/background.js"]
+		"scripts": ["scripts/utils.js", "scripts/background.js"]
 	},
 	"permissions": [
 		"tabs",
