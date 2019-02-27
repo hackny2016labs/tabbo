@@ -18,6 +18,16 @@ Promise.all([
 		openWindows.appendChild(h1);
 	}
 
+	chrome.storage.local.get(['window_default_id', 'window_default_serial'], results => {
+		if (results['window_default_id'] && results['window_default_serial']
+			&& JSON.stringify(windows.map(window => window.id)) === results['window_default_serial']) {
+			const sendWindow = windows.find(window => window.id === results['window_default_id']);
+			if (sendWindow) {
+				selectWindow(sendWindow, toSendId);
+			}
+		}
+	});
+
 	windows.forEach((w) => {
 		if (w.id === current.id) {
 			return;
@@ -40,12 +50,21 @@ Promise.all([
 				<div class="screen-index">${count}</div>
 				<div class="tab-count">${w.tabs.length + (w.tabs.length === 1 ? " tab" : " tabs")}
 				</div>`;
+			
+			const defaultDiv = document.createElement('div');
+			defaultDiv.className = 'default';
+			defaultDiv.innerHTML = `Default <input type="checkbox" name="default" value="` + count + `">`;
 
 			div.addEventListener('click', () => {
 				selectWindow(w, toSendId);
 			});
 
+			defaultDiv.addEventListener('click', () => {
+				chrome.storage.local.set({'window_default_serial': JSON.stringify(windows.map(window => window.id)), 'window_default_id': w.id});
+			});
+
 			openWindows.appendChild(div);
+			div.appendChild(defaultDiv);
 
 			count++;
 		});
