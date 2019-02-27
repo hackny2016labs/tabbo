@@ -31,6 +31,9 @@ Original creators:
 - [Andy Wang](https://github.com/ownzandy)
 - [Biggie Emmanuel](https://github.com/bigolu)
 
+Contributors:
+- [Scott Reed](https://github.com/sreed101)
+
 Continued Support:
 - [Jun Woo Shin](https://github.com/jwoos)
 
