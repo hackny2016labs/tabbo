@@ -108,40 +108,20 @@ function sendTabManager() {
 		if (windows.length === 1) {
 			// do nothing
 			return;
-		} else if (windows.length === 2) {
-			// send tab to only other window
+		} else {
+			// send tab to next window
 			utils.getCurrentTab().then((tab) => {
-				const otherWindow = windows.filter((filterWindow) => {
-					return (filterWindow.id !== tab.windowId);
-				});
-
-				chrome.tabs.move(tab.id, {windowId: otherWindow[0].id, index: -1});
-				chrome.windows.update(otherWindow[0].id, {focused: true});
+        const currentWindowIndex = windows.findIndex(w => w.id === currentWindow.id);
+        var nextWindowIndex = currentWindowIndex - 1;
+        if (nextWindowIndex < 0) {
+          nextWindowIndex = windows.length - 1;
+        }
+				chrome.tabs.move(tab.id, {windowId: windows[nextWindowIndex].id, index: -1});
+				chrome.windows.update(windows[nextWindowIndex].id, {focused: true});
 				chrome.tabs.update(tab.id, {selected: true});
 			});
-		} else {
-			utils.getCurrentTab().then((tab) => {
-				return utils.createTab({url : `../tabbo.html#${tab.id}`});
-			}).then((newTab) => {
-				console.log(newTab);
-				const onTabChange = (response) => {
-					if (response.tabId !== newTab.id) {
-						chrome.tabs.onActivated.removeListener(onTabChange);
-
-						utils.getTab(newTab.id).then(() => {
-							if (!chrome.runtime.lastError) {
-								chrome.tabs.remove(newTab.id);
-							}
-						}, (e) => {
-							console.error(e);
-						});
-					}
-				};
-
-				chrome.tabs.onActivated.addListener(onTabChange);
-			});
 		}
-	});
+  });
 }
 
 function explodeTabs() {
